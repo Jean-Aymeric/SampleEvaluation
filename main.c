@@ -2,8 +2,8 @@
 #include <time.h>
 #include <stdlib.h>
 
-#define WIDTH 100
-#define HEIGHT 50
+#define WIDTH 198
+#define HEIGHT 49
 #define SquareFree ' '
 #define SquareOccupied 'X'
 
@@ -14,7 +14,7 @@ void displayGrid(int grid[HEIGHT][WIDTH]) {
         }
         printf("\n");
     }
-    system("CLS");
+    //system("CLS");
 }
 
 void initializeGrid(int grid[HEIGHT][WIDTH]) {
@@ -47,6 +47,18 @@ int isEmpty(int grid[HEIGHT][WIDTH]) {
     return 1;
 }
 
+int countNbFull(int grid[HEIGHT][WIDTH]) {
+    int nbFull = 0;
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            if (grid[y][x] == 1) {
+                nbFull++;
+            }
+        }
+    }
+    return nbFull;
+}
+
 int isValid(int grid[HEIGHT][WIDTH], int x, int y) {
     if (grid[y][x] == 1) {
         return 0;
@@ -66,18 +78,20 @@ int isValid(int grid[HEIGHT][WIDTH], int x, int y) {
 
 void fillOneSquare(int grid[HEIGHT][WIDTH]) {
     // To do
-    srand( time( NULL ));
-    int y, x;
-    if (isEmpty(grid)) {
-        y = rand() % HEIGHT;
-        x = rand() % WIDTH;
-        grid[y][x] = 1;
-    } else {
-        do {
+    if (! isFull(grid)) {
+        srand(time(NULL));
+        int y, x;
+        if (isEmpty(grid)) {
             y = rand() % HEIGHT;
             x = rand() % WIDTH;
-        } while(!isValid(grid, x, y));
-        grid[y][x] = 1;
+            grid[y][x] = 1;
+        } else {
+            do {
+                y = rand() % HEIGHT;
+                x = rand() % WIDTH;
+            } while (!isValid(grid, x, y));
+            grid[y][x] = 1;
+        }
     }
 }
 
@@ -85,9 +99,15 @@ int main() {
     int grid[HEIGHT][WIDTH];
     initializeGrid(grid);
     while (!isFull(grid)) {
-        fillOneSquare(grid);
-        displayGrid(grid);
+        int nbFull = countNbFull(grid);
+        if (nbFull == 0) {
+            nbFull = 1;
+        }
+        for (int i = 0; i < nbFull; i++) {
+            fillOneSquare(grid);
+        }
 
+        displayGrid(grid);
 //        printf("Press Enter to continue\n");
 //        while( getchar() != '\n' );
     }
